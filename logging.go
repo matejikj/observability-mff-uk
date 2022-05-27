@@ -25,25 +25,30 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func requestLog(f string, r *http.Request) *logrus.Entry {
 	// TODO Logging: Obtain requestId, correlationId & traceId to the log entry. Uncomment following 3 lines.
-	// rid := getRequestId(r)
-	// cid := getCorrelationId(r)
-	// tid := getTracingId(r)
+	rid := getRequestId(r)
+	cid := getCorrelationId(r)
+	tid := getTracingId(r)
 	return funcLog(f).WithFields(logrus.Fields{
 		// TODO Logging: Add requestId, correlationId & traceId to the log entry. Uncomment following 3 lines.
-		// "requestId":     rid,
-		// "correlationId": cid,
-		// "traceId":       tid,
+		"requestId":     rid,
+		"correlationId": cid,
+		"traceId":       tid,
 	})
 }
 
 func getRequestId(r *http.Request) string {
+	// requestId := "matejik"
 	requestId := r.Header.Get(hdrRequestId)
 	if requestId == "" {
+		var mystring = "Hello world"
+		fmt.Printf("<>   %s", mystring)
 		requestId = uuid.New().String()
 		r.Header.Set(hdrRequestId, requestId)
 		log := requestLog("getRequestId", r)
 		log.Warnf("header %s is empty, no request id has been provided", hdrRequestId)
 	}
+	fmt.Printf("!! %s", requestId)
+
 	return requestId
 }
 
